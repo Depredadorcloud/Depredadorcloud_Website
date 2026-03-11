@@ -278,9 +278,9 @@ class _HomePageState extends State<HomePage> {
                       ResponsiveRowColumn(
                         layout: ResponsiveBreakpoints.of(context).isMobile ? ResponsiveRowColumnType.COLUMN : ResponsiveRowColumnType.ROW,
                         children: [
-                          _buildCard(LucideIcons.cpu, 'IoT Industrial', lang == AppLanguage.es ? 'Sensorización de motores diesel para mantenimiento predictivo.' : 'Diesel engine sensing for predictive maintenance.'),
-                          _buildCard(LucideIcons.binary, 'Custom Software', lang == AppLanguage.es ? 'Interfaces de control para sistemas hidráulicos automatizados.' : 'Control interfaces for automated hydraulic systems.'),
-                          _buildCard(LucideIcons.shieldAlert, 'Cyber-Mecánica', lang == AppLanguage.es ? 'Protección contra intrusiones en redes operativas de taller.' : 'Intrusion protection in operational workshop networks.'),
+                          ResponsiveRowColumnItem(child: _buildCard(LucideIcons.cpu, 'IoT Industrial', lang == AppLanguage.es ? 'Sensorización de motores diesel para mantenimiento predictivo.' : 'Diesel engine sensing for predictive maintenance.')),
+                          ResponsiveRowColumnItem(child: _buildCard(LucideIcons.binary, 'Custom Software', lang == AppLanguage.es ? 'Interfaces de control para sistemas hidráulicos automatizados.' : 'Control interfaces for automated hydraulic systems.')),
+                          ResponsiveRowColumnItem(child: _buildCard(LucideIcons.shieldAlert, 'Cyber-Mecánica', lang == AppLanguage.es ? 'Protección contra intrusiones en redes operativas de taller.' : 'Intrusion protection in operational workshop networks.')),
                         ],
                       ),
                       const SizedBox(height: 100),
