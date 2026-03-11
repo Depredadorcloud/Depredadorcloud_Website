@@ -5,6 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Cancel in-progress runs when a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pages: write
@@ -14,20 +19,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          
+          cache: true # Enable Flutter SDK caching
+
       - name: Install dependencies
         run: flutter pub get
         
-      - name: Build web
-        run: flutter build web --base-href "/Depredadorcloud_Website/"
-        
+      - name: Build web deployment
+        run: flutter build web --release --base-href "/Depredadorcloud_Website/"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -35,3 +41,4 @@ jobs:
           publish_dir: ./build/web
           publish_branch: gh-pages
           force_orphan: true
+          commit_message: "🚀 Deploying to GitHub Pages [skip ci]"
