@@ -1,46 +1,50 @@
-# DepredadorCloud Centro de Informática y Mecánica Pesada
+# DepredadorCloud: Centro de Informática y Mecánica Pesada
 
-Bienvenido al repositorio oficial del portal web de **DepredadorCloud**, el epicentro soberano donde la sinergia ciber-mecánica cobra vida. Donde las operaciones de software avanzadas controlan el acero industrial pesado.
+Bienvenido al repositorio oficial del portal web de **DepredadorCloud**, el epicentro soberano ubicado en **El Salvador** que fusiona la potencia computacional con la fuerza imparable de la maquinaria industrial pesada.
 
 ![DepredadorCloud Nexus](assets/img/hero.png)
 
 ## Overview
 
-Este repositorio contiene el código fuente para el portal público y los dashboards internos de inteligencia integrados bajo la orquestación del **Juan Sabe Main Agent**. DepredadorCloud unifica operaciones de Mecánica Pesada con infraestructura de TI hiperconvergente para operaciones mineras, Agritech y logística satelital.
+Este proyecto ha sido migrado a una arquitectura de **Flutter Web** para proporcionar una interfaz de usuario hiper-futurista, fluida y escalable. DepredadorCloud es un taller único que integra servicios de Informática Avanzada (Computer Science) y Mecánica Pesada en unas solas instalaciones.
 
-## Arquitectura del Sitio
+## Arquitectura
 
-El sitio consta de dos secciones principales:
+El sitio utiliza las siguientes capacidades de Flutter:
+- **UI Responsiva**: Adaptable a pantallas de escritorio y dispositivos móviles.
+- **Cyber-Mechanic Theme**: Estética Dark Mode con acentos neon (Blue/Orange) y efectos de cristal (Glassmorphism).
+- **Google Fonts (Outfit & Space Grotesk)**: Tipografía moderna que refuerza la identidad tecnológica.
+- **Lucide Icons**: Iconografía técnica estilizada.
 
-1. **Main Landing (Pública y Corporativa)**: 
-   - Arquitectura Vanilla HTML5, CSS3 y JS moderno.
-   - Glassmorphism UI, Dark Mode estético y animaciones hiper-futuristas.
-   - Presentación de servicios (TI Soberana, Mecánica Pesada Automatizada, Cyberseguridad, Agritech Satelital).
-   
-2. **Dashboard Multi-Agente (Portal de Inteligencia NEXUS)**:
-   - Panel de control de terminal simulada en tiempo real.
-   - Monitoreo de capacidades de los núcleos:
-     - **SISA** (Operaciones Físicas y Logísticas).
-     - **OMEGA-1** (Procesos NLP y Modelos Deep Learning 'Veritas').
-     - **Paul Kruger** (Inteligencia Financiera y señales de Trading).
-   - Integraciones inspiradas en ecosistemas de `agency-agents` y `deer-flow`.
+## Secciones del Portal
+1. **Inicio**: Presentación de la sinergia industrial en El Salvador.
+2. **Capacidades**:
+   - **Infraestructura TI Soberana**: Despliegues orquestados por SISA, OMEGA-1 y Paul Kruger.
+   - **Mecánica Pesada Automatizada**: Mantenimiento de motores y maquinaria industrial.
+   - **Cyberseguridad**: Defensa de red basada en telemetría Palantir WEF.
+   - **Agritech Satelital**: Gestión de flotas pesadas mediante datos en tiempo real.
+3. **Nosotros**: Detalle sobre la base operativa de Juan Sabe y la visión soberana.
 
 ## Stack Tecnológico
-- Funcionalidad asíncrona mediante ES6 JavaScript (app.js / script.js).
-- Iconografía estilizada mediante la librería `Lucide`.
-- Continuous Deployment (CD) automático mediante GitHub Actions hacia GitHub Pages.
+- **Frontend**: Flutter Web (Canal Stable).
+- **Styling**: Vanilla Flutter Widgets + Custom Gradients & Shadows.
+- **CI/CD**: GitHub Actions (Automatización de compilación y despliegue a GitHub Pages).
 
-## Uso Local
+## Desarrollo Local
 
-Para desplegar de manera inmediata para desarrollo:
+Para ejecutar el portal localmente en modo desarrollo:
 
 ```bash
-git clone https://github.com/Depredadorcloud/Depredadorcloud_Website.git
-cd Depredadorcloud_Website
-python3 -m http.server 8000
+flutter pub get
+flutter run -d chrome
 ```
-Dirígete a `http://localhost:8000/`.
+
+Para realizar la compilación de producción:
+
+```bash
+flutter build web --base-href "/Depredadorcloud_Website/"
+```
 
 ---
-*Construyendo el Futuro de la Industria Automatizada.*
+*Construyendo el Futuro de la Industria Automatizada desde El Salvador.*
 *Operado por Juan Sabe Orchestrator - 2026.*
