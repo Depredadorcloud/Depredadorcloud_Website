@@ -35,6 +35,7 @@ class Translations {
           '© 2026 DepredadorCloud. El Salvador - Centro de Informática y Mecánica Pesada.',
       'it_services_title': 'Servicios de TI e Infraestructura',
       'mech_services_title': 'Sistemas de Mecánica Pesada e Industrial',
+      'nav_agents': 'AGENTES',
       'diag_title': 'Diagnóstico Express',
       'diag_subtitle':
           'Selecciona un síntoma para recibir una recomendación inmediata.',
@@ -59,6 +60,7 @@ class Translations {
           '© 2026 DepredadorCloud. El Salvador - IT & Heavy Mechanics Center.',
       'it_services_title': 'IT Services & Infrastructure',
       'mech_services_title': 'Heavy & Industrial Mechanic Systems',
+      'nav_agents': 'AGENTS',
       'diag_title': 'Express Diagnostics',
       'diag_subtitle':
           'Select a symptom to receive an immediate recommendation.',
@@ -87,6 +89,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/mechanics',
       builder: (context, state) => const MechanicsPage(),
+    ),
+    GoRoute(
+      path: '/agents',
+      builder: (context, state) => const AgentsPage(),
     ),
   ],
 );
@@ -177,6 +183,10 @@ class NavBar extends StatelessWidget {
                   _NavBtn(
                     Translations.t('nav_mechanics', lang),
                     onTap: () => context.go('/mechanics'),
+                  ),
+                  _NavBtn(
+                    Translations.t('nav_agents', lang),
+                    onTap: () => context.go('/agents'),
                   ),
                   _NavBtn(Translations.t('nav_about', lang)),
                   _NavBtn(
@@ -1218,6 +1228,225 @@ class FooterSection extends StatelessWidget {
             style: const TextStyle(color: Colors.grey),
           );
         },
+      ),
+    );
+  }
+}
+
+class AgentsPage extends StatelessWidget {
+  const AgentsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = languageNotifier.value;
+    final isEs = lang == AppLanguage.es;
+    return Scaffold(
+      backgroundColor: const Color(0xFF020617),
+      body: Stack(
+        children: [
+          // Background Particles
+          Positioned.fill(
+            child: CircularParticle(
+              key: UniqueKey(),
+              awayRadius: 80,
+              numberOfParticles: 100,
+              speedOfParticles: 1,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              onTapAnimation: true,
+              particleColor: const Color(0xFFf97316).withOpacity(0.2),
+              awayAnimationDuration: const Duration(milliseconds: 600),
+              maxParticleSize: 3,
+              isRandSize: true,
+              isLineVisible: true,
+              lineColor: const Color(0xFFf97316).withOpacity(0.1),
+            ),
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 120),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FadeInDown(
+                        child: Text(
+                          isEs ? 'CENTRO NEURAL AGENTEVOLVER' : 'AGENTEVOLVER NEURAL CENTER',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 56,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFFf97316),
+                            letterSpacing: -1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FadeInLeft(
+                        child: Text(
+                          isEs 
+                            ? 'Orquestación de Agentes Multilenguaje (Rust, Zig, Go, Python)'
+                            : 'Multi-language Agent Orchestration (Rust, Zig, Go, Python)',
+                          style: GoogleFonts.inter(
+                            fontSize: 18,
+                            color: const Color(0xFF94a3b8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 60),
+                      GridView.count(
+                        crossAxisCount: ResponsiveBreakpoints.of(context).isDesktop ? 3 : 1,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 30,
+                        crossAxisSpacing: 30,
+                        childAspectRatio: 1.0,
+                        children: [
+                          _AgentPulseCard(
+                            name: 'NEURAL MATH',
+                            status: 'ACTIVE',
+                            lang: 'Python (SymPy + Sandbox)',
+                            desc: isEs ? 'Derivación simbólica y verificación numérica.' : 'Symbolic derivation and numerical verification.',
+                            icon: LucideIcons.binary,
+                            color: const Color(0xFF0ea5e9),
+                          ),
+                          _AgentPulseCard(
+                            name: 'OPS ORCHESTRATOR',
+                            status: 'MONITORING',
+                            lang: 'Python (24/7 Detective)',
+                            desc: isEs ? 'Detección de raíz en <40ms y auto-remediación.' : 'Root cause detection in <40ms and auto-remediation.',
+                            icon: LucideIcons.activity,
+                            color: const Color(0xFF22c55e),
+                          ),
+                          _AgentPulseCard(
+                            name: 'JENKINS SWARM',
+                            status: 'CONNECTED',
+                            lang: 'Python (Router/Critic/Specialist)',
+                            desc: isEs ? 'Diagnóstico autónomo de pipelines CI/CD.' : 'Autonomous CI/CD pipeline diagnostics.',
+                            icon: LucideIcons.container,
+                            color: const Color(0xFFf97316),
+                          ),
+                          _AgentPulseCard(
+                            name: 'CORE SENTINEL',
+                            status: 'STABLE',
+                            lang: 'Rust (ZeroClaw Inspired)',
+                            desc: isEs ? 'Seguridad ZeroTrust y procesamiento en nanosegundos.' : 'ZeroTrust security and nanosecond processing.',
+                            icon: LucideIcons.shieldAlert,
+                            color: const Color(0xFFef4444),
+                          ),
+                          _AgentPulseCard(
+                            name: 'EDGE PULSAR',
+                            status: 'STABLE',
+                            lang: 'Zig (NullClaw Pattern)',
+                            desc: isEs ? 'Runtime de 18KB para equipos industriales.' : '18KB runtime for industrial equipment.',
+                            icon: LucideIcons.zap,
+                            color: const Color(0xFFeab308),
+                          ),
+                          _AgentPulseCard(
+                            name: 'GO CONDUIT',
+                            status: 'STANDBY',
+                            lang: 'Go (Genkit/GoMind)',
+                            desc: isEs ? 'Conectores de alta concurrencia para sistemas legacy.' : 'High-concurrency connectors for legacy systems.',
+                            icon: LucideIcons.layers,
+                            color: const Color(0xFF6366f1),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const FooterSection(),
+              ],
+            ),
+          ),
+          const NavBar(),
+        ],
+      ),
+    );
+  }
+}
+
+class _AgentPulseCard extends StatelessWidget {
+  final String name;
+  final String status;
+  final String lang;
+  final String desc;
+  final IconData icon;
+  final Color color;
+
+  const _AgentPulseCard({
+    required this.name,
+    required this.status,
+    required this.lang,
+    required this.desc,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tilt(
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(icon, color: color, size: 32),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    status,
+                    style: GoogleFonts.spaceGrotesk(
+                      color: color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              name,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              lang,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              desc,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: const Color(0xFF94a3b8),
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
