@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.9"
+  animated_text_kit:
+    dependency: "direct main"
+    description:
+      name: animated_text_kit
+      sha256: "1d41486860885321972dd332179357a535d50d4780fc2ba5e1805bde085c81f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.0"
   args:
     dependency: transitive
     description:
@@ -123,6 +131,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_staggered_animations:
+    dependency: "direct main"
+    description:
+      name: flutter_staggered_animations
+      sha256: "81d3c816c9bb0dca9e8a5d5454610e21ffb068aedb2bde49d2f8d04f75538351"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -136,6 +152,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_tilt:
+    dependency: "direct main"
+    description:
+      name: flutter_tilt
+      sha256: aab123e968a9a95c828504b71bf9d8ad31c57f108c10b598889f377c98d52f06
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.2"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -293,6 +317,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.3.0"
+  particles_flutter:
+    dependency: "direct main"
+    description:
+      name: particles_flutter
+      sha256: "74057830f0526902cc36325b5feefbbeda88b5f8f9958cf8f24ec98eeeab36c2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   path:
     dependency: transitive
     description:
@@ -397,6 +429,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  sensors_plus:
+    dependency: transitive
+    description:
+      name: sensors_plus
+      sha256: "56e8cd4260d9ed8e00ecd8da5d9fdc8a1b2ec12345a750dfa51ff83fcf12e3fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  sensors_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: sensors_plus_platform_interface
+      sha256: "58815d2f5e46c0c41c40fb39375d3f127306f7742efe3b891c0b1c87e2b5cd5d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   seo_renderer:
     dependency: "direct main"
     description:
@@ -433,6 +481,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  stream_transform:
+    dependency: transitive
+    description:
+      name: stream_transform
+      sha256: ad47125e588cfd37a9a7f86c7d6356dde8dfe89d071d293f80ca9e9273a33871
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   string_scanner:
     dependency: transitive
     description:

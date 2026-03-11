@@ -7,6 +7,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:seo_renderer/seo_renderer.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_tilt/flutter_tilt.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:particles_flutter/particles_flutter.dart';
 
 // --- Localization System ---
 enum AppLanguage { en, es }
@@ -276,6 +279,27 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CircularParticle(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                particleColor: accentColor.withOpacity(0.3),
+                numberOfParticles: isMechanicMode ? 30 : 60,
+                speedOfParticles: 0.5,
+                maxParticleSize: isMechanicMode ? 5 : 3,
+                awayRadius: 100,
+                onTapAnimation: false,
+                isRandSize: true,
+                isRandomColor: false,
+                connectDots:
+                    !isMechanicMode, // Show connecting lines only in IT mode
+                enableHover: true,
+                hoverColor: accentColor.withOpacity(0.8),
+                hoverRadius: 80,
+              ),
+            ),
+          ),
           SingleChildScrollView(
             child: Column(
               children: [
@@ -310,14 +334,35 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 16),
                             FadeInLeft(
                               delay: const Duration(milliseconds: 200),
-                              child: TextRenderer(
-                                child: Text(
-                                  Translations.t('hero_subtitle', lang),
+                              child: SizedBox(
+                                height:
+                                    ResponsiveBreakpoints.of(context).isMobile
+                                    ? 120
+                                    : 130, // Fixed height to prevent dancing layouts
+                                child: DefaultTextStyle(
                                   style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 54,
+                                    fontSize:
+                                        ResponsiveBreakpoints.of(
+                                          context,
+                                        ).isMobile
+                                        ? 42
+                                        : 54,
                                     fontWeight: FontWeight.w800,
                                     height: 1.1,
                                     color: Colors.white,
+                                  ),
+                                  child: AnimatedTextKit(
+                                    key: ValueKey<String>(
+                                      Translations.t('hero_subtitle', lang),
+                                    ), // Forces rebuild on language change
+                                    animatedTexts: [
+                                      TypewriterAnimatedText(
+                                        Translations.t('hero_subtitle', lang),
+                                        speed: const Duration(milliseconds: 50),
+                                      ),
+                                    ],
+                                    isRepeatingAnimation: false,
+                                    displayFullTextOnTap: true,
                                   ),
                                 ),
                               ),
@@ -516,35 +561,50 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 600),
         child: Container(
           margin: const EdgeInsets.all(16),
-          child: ClipRRect(
+          child: Tilt(
             borderRadius: BorderRadius.circular(12),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0f172a).withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
-                ),
-                child: Column(
-                  children: [
-                    Icon(icon, size: 40, color: const Color(0xFFf97316)),
-                    const SizedBox(height: 16),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+            tiltConfig: const TiltConfig(angle: 15, enableRevert: true),
+            lightConfig: const LightConfig(
+              color: Colors.white12,
+              intensity: 0.8,
+            ),
+            shadowConfig: const ShadowConfig(
+              minIntensity: 0.1,
+              maxIntensity: 0.4,
+              offsetFactor: 0.08,
+              color: Colors.black,
+              blurRadius: 20,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0f172a).withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(icon, size: 40, color: const Color(0xFFf97316)),
+                      const SizedBox(height: 16),
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      desc,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Color(0xFF94a3b8)),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        desc,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Color(0xFF94a3b8)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -757,54 +817,69 @@ class _ServiceDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeInUp(
       duration: const Duration(milliseconds: 500),
-      child: ClipRRect(
+      child: Tilt(
         borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Container(
-            padding: const EdgeInsets.all(30),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0f172a).withOpacity(0.6),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: accent.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+        tiltConfig: const TiltConfig(angle: 10),
+        lightConfig: LightConfig(
+          color: accent.withOpacity(0.2),
+          intensity: 0.5,
+        ),
+        shadowConfig: const ShadowConfig(
+          minIntensity: 0.1,
+          maxIntensity: 0.3,
+          offsetFactor: 0.05,
+          color: Colors.black,
+          blurRadius: 15,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0f172a).withOpacity(0.6),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: accent.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: accent, size: 30),
                   ),
-                  child: Icon(icon, color: accent, size: 30),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        desc,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF94a3b8),
-                          height: 1.5,
+                        const SizedBox(height: 12),
+                        Text(
+                          desc,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF94a3b8),
+                            height: 1.5,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
