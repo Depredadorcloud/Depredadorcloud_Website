@@ -45,6 +45,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: 0.20.2
+  animate_do: ^3.3.4
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
