@@ -566,14 +566,14 @@ class _HomePageState extends State<HomePage> {
             tiltConfig: const TiltConfig(angle: 15, enableRevert: true),
             lightConfig: const LightConfig(
               color: Colors.white12,
-              intensity: 0.8,
+              minIntensity: 0.1,
+              maxIntensity: 0.8,
             ),
             shadowConfig: const ShadowConfig(
               minIntensity: 0.1,
               maxIntensity: 0.4,
               offsetFactor: 0.08,
               color: Colors.black,
-              blurRadius: 20,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -645,6 +645,41 @@ class ITPage extends StatelessWidget {
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF0ea5e9),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      FadeInRight(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: const Color(0xFF0ea5e9).withOpacity(0.3),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0ea5e9).withOpacity(0.1),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Flexible(
+                            child: ImageRenderer(
+                              alt: 'IT Command Center',
+                              child: Image.asset(
+                                'assets/img/it/banner.png',
+                                height:
+                                    ResponsiveBreakpoints.of(context).isMobile
+                                    ? 250
+                                    : 400,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -739,6 +774,41 @@ class MechanicsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 40),
+                      FadeInRight(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: const Color(0xFFf97316).withOpacity(0.3),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFf97316).withOpacity(0.1),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Flexible(
+                            child: ImageRenderer(
+                              alt: 'Heavy Machinery Workshop',
+                              child: Image.asset(
+                                'assets/img/mechanic/banner.png',
+                                height:
+                                    ResponsiveBreakpoints.of(context).isMobile
+                                    ? 250
+                                    : 400,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
                       GridView.count(
                         crossAxisCount:
                             ResponsiveBreakpoints.of(context).isDesktop ? 2 : 1,
@@ -822,14 +892,14 @@ class _ServiceDetailCard extends StatelessWidget {
         tiltConfig: const TiltConfig(angle: 10),
         lightConfig: LightConfig(
           color: accent.withOpacity(0.2),
-          intensity: 0.5,
+          minIntensity: 0.1,
+          maxIntensity: 0.5,
         ),
         shadowConfig: const ShadowConfig(
           minIntensity: 0.1,
           maxIntensity: 0.3,
           offsetFactor: 0.05,
           color: Colors.black,
-          blurRadius: 15,
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
