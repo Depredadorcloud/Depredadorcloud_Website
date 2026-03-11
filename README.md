@@ -8,13 +8,24 @@ Bienvenido al repositorio oficial del portal web de **DepredadorCloud**, el epic
 
 Este proyecto ha sido migrado a una arquitectura de **Flutter Web** para proporcionar una interfaz de usuario hiper-futurista, fluida y escalable. DepredadorCloud es un taller único que integra servicios de Informática Avanzada (Computer Science) y Mecánica Pesada en unas solas instalaciones.
 
-## Arquitectura
+## Arquitectura & Visual Excellence
 
-El sitio utiliza las siguientes capacidades de Flutter:
-- **UI Responsiva**: Adaptable a pantallas de escritorio y dispositivos móviles.
-- **Cyber-Mechanic Theme**: Estética Dark Mode con acentos neon (Blue/Orange) y efectos de cristal (Glassmorphism).
-- **Google Fonts (Outfit & Space Grotesk)**: Tipografía moderna que refuerza la identidad tecnológica.
-- **Lucide Icons**: Iconografía técnica estilizada.
+El sitio utiliza las siguientes capacidades y librerías de vanguardia en Flutter para asegurar un aspecto Ultra Premium y cinemático, compitiendo con los repositorios globales más élite:
+
+- **Interactive 3D Cards**: Implementadas con `flutter_tilt` para lograr inclinaciones de eje tridimensional bajo el cursor junto a luz volumétrica y sombras magnéticas.
+- **Particle Hub Matrix**: Fondo reactivo construido sobre `particles_flutter` que ajusta su densidad, líneas de red y color dependiendo del modo activo (Neural Blue para IT, Heat Sparks para Mecánica).
+- **Core Boot Terminal**: Integración de `animated_text_kit` para generar un efecto en tiempo real de tipeo tipo consola de IA (Typewriter effect) ligado dinámicamente al sistema de traducciones.
+- **Glassmorphism Dynamics**: Arquitectura moderna con `BackdropFilter` que brinda a cada sección una sensación física sobre pantallas borrosas y fondos oscuros inmersivos.
+- **UI Responsiva**: Flujo estructurado sobre `responsive_framework`.
+- **Google Fonts & Lucide Icons**: Sistemas contemporáneos `Outfit & Space Grotesk`.
+
+### Previsualización Visual: Infraestructura y Maquinaria
+
+<p align="center">
+  <img src="assets/img/it/banner.png" width="48%">
+  &nbsp;
+  <img src="assets/img/mechanic/banner.png" width="48%">
+</p>
 
 ## Secciones del Portal
 1. **Inicio**: Presentación de la sinergia industrial en El Salvador.

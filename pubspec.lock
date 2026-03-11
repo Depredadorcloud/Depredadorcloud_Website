@@ -321,10 +321,10 @@ packages:
     dependency: "direct main"
     description:
       name: particles_flutter
-      sha256: "74057830f0526902cc36325b5feefbbeda88b5f8f9958cf8f24ec98eeeab36c2"
+      sha256: "920b4e2df3281108db546bffb8672a5c18e649c6e90d257409bcc8efb1e846dc"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.2"
+    version: "0.1.4"
   path:
     dependency: transitive
     description:
