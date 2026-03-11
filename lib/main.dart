@@ -27,6 +27,9 @@ class Translations {
       'footer_copy': '© 2026 DepredadorCloud. El Salvador - Centro de Informática y Mecánica Pesada.',
       'it_services_title': 'Servicios de TI e Infraestructura',
       'mech_services_title': 'Sistemas de Mecánica Pesada e Industrial',
+      'diag_title': 'Diagnóstico Express',
+      'diag_subtitle': 'Selecciona un síntoma para recibir una recomendación inmediata.',
+      'recommendation': 'Recomendación de DepredadorCloud:',
     },
     AppLanguage.en: {
       'title': 'DepredadorCloud | IT & Heavy Mechanics Center',
@@ -45,6 +48,9 @@ class Translations {
       'footer_copy': '© 2026 DepredadorCloud. El Salvador - IT & Heavy Mechanics Center.',
       'it_services_title': 'IT Services & Infrastructure',
       'mech_services_title': 'Heavy & Industrial Mechanic Systems',
+      'diag_title': 'Express Diagnostics',
+      'diag_subtitle': 'Select a symptom to receive an immediate recommendation.',
+      'recommendation': 'DepredadorCloud Recommendation:',
     }
   };
 
@@ -277,6 +283,8 @@ class _HomePageState extends State<HomePage> {
                           _buildCard(LucideIcons.shieldAlert, 'Cyber-Mecánica', lang == AppLanguage.es ? 'Protección contra intrusiones en redes operativas de taller.' : 'Intrusion protection in operational workshop networks.'),
                         ],
                       ),
+                      const SizedBox(height: 100),
+                      const InteractiveDiagnostics(),
                     ],
                   ),
                 ),
@@ -426,6 +434,149 @@ class _ServiceDetailCard extends StatelessWidget {
             ]),
           )
         ],
+      ),
+    );
+  }
+}
+
+class InteractiveDiagnostics extends StatefulWidget {
+  const InteractiveDiagnostics({super.key});
+
+  @override
+  State<InteractiveDiagnostics> createState() => _InteractiveDiagnosticsState();
+}
+
+class _InteractiveDiagnosticsState extends State<InteractiveDiagnostics> {
+  String? selectedSymptom;
+  String? recommendation;
+  bool isIt = true;
+
+  final Map<String, Map<AppLanguage, String>> techDiag = {
+    'Network Instability': {
+      AppLanguage.en: 'Deploying adaptive load balancing and WEF telemetry monitoring.',
+      AppLanguage.es: 'Despliegue de balanceo de carga adaptativo y monitoreo de telemetría WEF.',
+    },
+    'System Sluggishness': {
+      AppLanguage.en: 'Optimizing VDS nodes and high-frequency memory allocation.',
+      AppLanguage.es: 'Optimización de nodos VDS y asignación de memoria de alta frecuencia.',
+    },
+    'Security Breach': {
+      AppLanguage.en: 'Initiating global IP lockdown and Palantir-based threat hunting.',
+      AppLanguage.es: 'Iniciando bloqueo global de IPs y búsqueda de amenazas basada en Palantir.',
+    },
+    'Power Loss': {
+      AppLanguage.en: 'Fuel injector synchronization and ECU re-mapping required.',
+      AppLanguage.es: 'Se requiere sincronización de inyectores y re-mapeo de la ECU.',
+    },
+    'Hydraulic Failure': {
+      AppLanguage.en: 'Pressure sensor recalibration and valve actuator vetting.',
+      AppLanguage.es: 'Recalibración de sensores de presión y revisión de actuadores de válvulas.',
+    },
+    'Overheating': {
+      AppLanguage.en: 'IoT thermal sensing array installation for predictive cooling.',
+      AppLanguage.es: 'Instalación de matriz de sensores térmicos IoT para enfriamiento predictivo.',
+    },
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = languageNotifier.value;
+    final itSymptoms = lang == AppLanguage.es ? ['Inestabilidad de Red', 'Lentitud de Sistema', 'Brecha de Seguridad'] : ['Network Instability', 'System Sluggishness', 'Security Breach'];
+    final mechSymptoms = lang == AppLanguage.es ? ['Pérdida de Potencia', 'Falla Hidráulica', 'Sobrecalentamiento'] : ['Power Loss', 'Hydraulic Failure', 'Overheating'];
+
+    return Container(
+      width: 800,
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: const Color(0xFF020617),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
+        boxShadow: [BoxShadow(color: (isIt ? const Color(0xFF0ea5e9) : const Color(0xFFf97316)).withOpacity(0.1), blurRadius: 30)],
+      ),
+      child: Column(
+        children: [
+          Text(Translations.t('diag_title', lang), style: GoogleFonts.spaceGrotesk(fontSize: 32, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text(Translations.t('diag_subtitle', lang), style: const TextStyle(color: Color(0xFF94a3b8))),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _DiagModeBtn('IT', isIt, (v) => setState(() => {isIt = v, selectedSymptom = null, recommendation = null})),
+              const SizedBox(width: 20),
+              _DiagModeBtn('MECHANIC', !isIt, (v) => setState(() => {isIt = !v, selectedSymptom = null, recommendation = null})),
+            ],
+          ),
+          const SizedBox(height: 40),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: (isIt ? itSymptoms : mechSymptoms).map((s) => ChoiceChip(
+              label: Text(s),
+              selected: selectedSymptom == s,
+              onSelected: (val) {
+                setState(() {
+                  selectedSymptom = val ? s : null;
+                  if (val) {
+                    // Normalize lookup key to English for the map
+                    String lookupKey = s;
+                    if (lang == AppLanguage.es) {
+                       if (s == 'Inestabilidad de Red') lookupKey = 'Network Instability';
+                       if (s == 'Lentitud de Sistema') lookupKey = 'System Sluggishness';
+                       if (s == 'Brecha de Seguridad') lookupKey = 'Security Breach';
+                       if (s == 'Pérdida de Potencia') lookupKey = 'Power Loss';
+                       if (s == 'Falla Hidráulica') lookupKey = 'Hydraulic Failure';
+                       if (s == 'Sobrecalentamiento') lookupKey = 'Overheating';
+                    }
+                    recommendation = techDiag[lookupKey]?[lang];
+                  } else {
+                    recommendation = null;
+                  }
+                });
+              },
+              selectedColor: isIt ? const Color(0xFF0ea5e9).withOpacity(0.3) : const Color(0xFFf97316).withOpacity(0.3),
+              labelStyle: TextStyle(color: selectedSymptom == s ? (isIt ? const Color(0xFF0ea5e9) : const Color(0xFFf97316)) : Colors.grey),
+            )).toList(),
+          ),
+          if (recommendation != null) ...[
+            const SizedBox(height: 48),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                children: [
+                  Text(Translations.t('recommendation', lang), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const SizedBox(height: 12),
+                  Text(recommendation!, textAlign: TextAlign.center, style: GoogleFonts.spaceGrotesk(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500)),
+                ],
+              ),
+            )
+          ]
+        ],
+      ),
+    );
+  }
+}
+
+class _DiagModeBtn extends StatelessWidget {
+  final String label;
+  final bool active;
+  final Function(bool) onTap;
+  const _DiagModeBtn(this.label, this.active, this.onTap);
+  @override
+  Widget build(BuildContext context) {
+    final color = label == 'IT' ? const Color(0xFF0ea5e9) : const Color(0xFFf97316);
+    return InkWell(
+      onTap: () => onTap(true),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: active ? color.withOpacity(0.1) : Colors.transparent,
+          border: Border.all(color: active ? color : Colors.white10),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Text(label, style: TextStyle(color: active ? color : Colors.grey, fontWeight: FontWeight.bold)),
       ),
     );
   }
