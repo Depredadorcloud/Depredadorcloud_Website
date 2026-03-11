@@ -36,10 +36,12 @@ class Translations {
       'it_services_title': 'Servicios de TI e Infraestructura',
       'mech_services_title': 'Sistemas de Mecánica Pesada e Industrial',
       'nav_agents': 'AGENTES',
-      'diag_title': 'Diagnóstico Express',
+      'diag_title': 'Diagnóstico Neural',
       'diag_subtitle':
-          'Selecciona un síntoma para recibir una recomendación inmediata.',
-      'recommendation': 'Recomendación de DepredadorCloud:',
+          'Selecciona un síntoma para recibir una recomendación inmediata de Juan Sabe.',
+      'recommendation': 'Recomendación de Juan Sabe v6.0 ULTRA:',
+      'architect_title': 'THE ARCHITECT',
+      'architect_subtitle': 'Soberanía Políglota y Orquestación de Torque',
     },
     AppLanguage.en: {
       'title': 'DepredadorCloud | IT & Heavy Mechanics Center',
@@ -61,10 +63,12 @@ class Translations {
       'it_services_title': 'IT Services & Infrastructure',
       'mech_services_title': 'Heavy & Industrial Mechanic Systems',
       'nav_agents': 'AGENTS',
-      'diag_title': 'Express Diagnostics',
+      'diag_title': 'Neural Diagnostics',
       'diag_subtitle':
-          'Select a symptom to receive an immediate recommendation.',
-      'recommendation': 'DepredadorCloud Recommendation:',
+          'Select a symptom to receive an immediate recommendation from Juan Sabe.',
+      'recommendation': 'Juan Sabe v6.0 ULTRA Recommendation:',
+      'architect_title': 'THE ARCHITECT',
+      'architect_subtitle': 'Polyglot Sovereignty & Torque Orchestration',
     },
   };
 
@@ -1017,17 +1021,49 @@ class _InteractiveDiagnosticsState extends State<InteractiveDiagnostics> {
       AppLanguage.es:
           'Instalación de matriz de sensores térmicos IoT para enfriamiento predictivo.',
     },
+    'Physical AI Sync': {
+      AppLanguage.en:
+          'Deploying Robotics IoT Sovereign Node with multi-agent consensus.',
+      AppLanguage.es:
+          'Despliegue de Nodo Soberano de Robótica IoT con consenso multi-agente.',
+    },
+    'Digital Workforce': {
+      AppLanguage.en:
+          'Activating CUA-RAG hybrid nodes for GUI workflow automation.',
+      AppLanguage.es:
+          'Activando nodos híbridos CUA-RAG para automatización de flujos GUI.',
+    },
   };
 
   @override
   Widget build(BuildContext context) {
     final lang = languageNotifier.value;
     final itSymptoms = lang == AppLanguage.es
-        ? ['Inestabilidad de Red', 'Lentitud de Sistema', 'Brecha de Seguridad']
-        : ['Network Instability', 'System Sluggishness', 'Security Breach'];
+        ? [
+            'Inestabilidad de Red',
+            'Lentitud de Sistema',
+            'Brecha de Seguridad',
+            'Fuerza de Trabajo Digital'
+          ]
+        : [
+            'Network Instability',
+            'System Sluggishness',
+            'Security Breach',
+            'Digital Workforce'
+          ];
     final mechSymptoms = lang == AppLanguage.es
-        ? ['Pérdida de Potencia', 'Falla Hidráulica', 'Sobrecalentamiento']
-        : ['Power Loss', 'Hydraulic Failure', 'Overheating'];
+        ? [
+            'Pérdida de Potencia',
+            'Falla Hidráulica',
+            'Sobrecalentamiento',
+            'Sincronización AI Física'
+          ]
+        : [
+            'Power Loss',
+            'Hydraulic Failure',
+            'Overheating',
+            'Physical AI Sync'
+          ];
 
     return Container(
       width: 800,
@@ -1121,6 +1157,22 @@ class _InteractiveDiagnosticsState extends State<InteractiveDiagnostics> {
                             }
                             if (s == 'Sobrecalentamiento') {
                               lookupKey = 'Overheating';
+                            }
+                            if (s == 'Fuerza de Trabajo Digital' ||
+                                s == 'Digital Workforce') {
+                              lookupKey = 'Digital Workforce';
+                            }
+                            if (s == 'Sincronización AI Física' ||
+                                s == 'Physical AI Sync') {
+                              lookupKey = 'Physical AI Sync';
+                            }
+                          } else {
+                            // En
+                            if (s == 'Digital Workforce') {
+                              lookupKey = 'Digital Workforce';
+                            }
+                            if (s == 'Physical AI Sync') {
+                              lookupKey = 'Physical AI Sync';
                             }
                           }
                           recommendation = techDiag[lookupKey]?[lang];
@@ -1295,8 +1347,99 @@ class AgentsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 60),
+                      const SizedBox(height: 60),
+                      // The Architect Section
+                      FadeInUp(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFFf97316).withOpacity(0.1),
+                                Colors.transparent
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(
+                              color: const Color(0xFFf97316).withOpacity(0.3),
+                            ),
+                          ),
+                          child: ResponsiveRowColumn(
+                            layout: ResponsiveBreakpoints.of(context).isMobile
+                                ? ResponsiveRowColumnType.COLUMN
+                                : ResponsiveRowColumnType.ROW,
+                            children: [
+                              ResponsiveRowColumnItem(
+                                rowFlex: 1,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFf97316),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        'MASTER IDENTITY',
+                                        style: GoogleFonts.spaceGrotesk(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      Translations.t('architect_title', lang),
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 42,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      Translations.t('architect_subtitle', lang),
+                                      style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        color: const Color(0xFFf97316),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Text(
+                                      isEs
+                                          ? 'El núcleo de orquestación de Juan Sabe. Integra memorias soberanas (Contexa) y coordina flotas de agentes políglotas con latencia cero.'
+                                          : 'The orchestration core of Juan Sabe. Integrates sovereign memories (Contexa) and coordinates polyglot agent fleets with zero latency.',
+                                      style: const TextStyle(
+                                        color: Color(0xFF94a3b8),
+                                        fontSize: 16,
+                                        height: 1.6,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ResponsiveRowColumnItem(
+                                rowFlex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Image.asset(
+                                    'assets/img/agents/the_architect.png',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 80),
                       GridView.count(
-                        crossAxisCount: ResponsiveBreakpoints.of(context).isDesktop ? 3 : 1,
+                        crossAxisCount:
+                            ResponsiveBreakpoints.of(context).isDesktop ? 3 : 1,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 30,
@@ -1307,47 +1450,59 @@ class AgentsPage extends StatelessWidget {
                             name: 'NEURAL MATH',
                             status: 'ACTIVE',
                             lang: 'Python (SymPy + Sandbox)',
-                            desc: isEs ? 'Derivación simbólica y verificación numérica.' : 'Symbolic derivation and numerical verification.',
+                            desc: isEs
+                                ? 'Derivación simbólica y verificación numérica.'
+                                : 'Symbolic derivation and numerical verification.',
                             icon: LucideIcons.binary,
                             color: const Color(0xFF0ea5e9),
                           ),
                           _AgentPulseCard(
-                            name: 'OPS ORCHESTRATOR',
-                            status: 'MONITORING',
-                            lang: 'Python (24/7 Detective)',
-                            desc: isEs ? 'Detección de raíz en <40ms y auto-remediación.' : 'Root cause detection in <40ms and auto-remediation.',
-                            icon: LucideIcons.activity,
-                            color: const Color(0xFF22c55e),
+                            name: 'ROBOTICS NODE',
+                            status: 'SIMULATING',
+                            lang: 'Python (Jetson VLA)',
+                            desc: isEs
+                                ? 'Control de flotas (System 1/2) y patrullaje autónomo.'
+                                : 'Fleet control (System 1/2) and autonomous patrol.',
+                            icon: LucideIcons.bot,
+                            color: const Color(0xFF8b5cf6),
                           ),
                           _AgentPulseCard(
-                            name: 'JENKINS SWARM',
-                            status: 'CONNECTED',
-                            lang: 'Python (Router/Critic/Specialist)',
-                            desc: isEs ? 'Diagnóstico autónomo de pipelines CI/CD.' : 'Autonomous CI/CD pipeline diagnostics.',
-                            icon: LucideIcons.container,
-                            color: const Color(0xFFf97316),
+                            name: 'CUA-RAG WORKER',
+                            status: 'ACTIVE',
+                            lang: 'Python (OpenCUA)',
+                            desc: isEs
+                                ? 'Automatización de flujos GUI y recuperación híbrida.'
+                                : 'GUI workflow automation and hybrid retrieval.',
+                            icon: LucideIcons.mousePointer2,
+                            color: const Color(0xFFec4899),
                           ),
                           _AgentPulseCard(
                             name: 'CORE SENTINEL',
                             status: 'STABLE',
-                            lang: 'Rust (ZeroClaw Inspired)',
-                            desc: isEs ? 'Seguridad ZeroTrust y procesamiento en nanosegundos.' : 'ZeroTrust security and nanosecond processing.',
+                            lang: 'Rust (Memory Safe)',
+                            desc: isEs
+                                ? 'Seguridad ZeroTrust y escaneo de comandos bash.'
+                                : 'ZeroTrust security and bash command scanning.',
                             icon: LucideIcons.shieldAlert,
                             color: const Color(0xFFef4444),
                           ),
                           _AgentPulseCard(
                             name: 'EDGE PULSAR',
                             status: 'STABLE',
-                            lang: 'Zig (NullClaw Pattern)',
-                            desc: isEs ? 'Runtime de 18KB para equipos industriales.' : '18KB runtime for industrial equipment.',
+                            lang: 'Zig (Low Latency)',
+                            desc: isEs
+                                ? 'Binarios de 18KB para procesos de tiempo real.'
+                                : '18KB binaries for real-time processes.',
                             icon: LucideIcons.zap,
                             color: const Color(0xFFeab308),
                           ),
                           _AgentPulseCard(
                             name: 'GO CONDUIT',
-                            status: 'STANDBY',
-                            lang: 'Go (Genkit/GoMind)',
-                            desc: isEs ? 'Conectores de alta concurrencia para sistemas legacy.' : 'High-concurrency connectors for legacy systems.',
+                            status: 'CONNECTED',
+                            lang: 'Go (High Concurrency)',
+                            desc: isEs
+                                ? 'Conexión a herramientas MCP y conduits concurrentes.'
+                                : 'Connection to MCP tools and concurrent conduits.',
                             icon: LucideIcons.layers,
                             color: const Color(0xFF6366f1),
                           ),
