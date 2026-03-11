@@ -303,14 +303,11 @@ class _HomePageState extends State<HomePage> {
                 speedOfParticles: 0.5,
                 maxParticleSize: isMechanicMode ? 5 : 3,
                 awayRadius: 100,
-                onTapAnimation: false,
                 isRandSize: true,
                 isRandomColor: false,
-                connectDots:
+                isLineVisible:
                     !isMechanicMode, // Show connecting lines only in IT mode
-                enableHover: true,
-                hoverColor: accentColor.withOpacity(0.8),
-                hoverRadius: 80,
+                lineColor: accentColor.withOpacity(0.1),
               ),
             ),
           ),
@@ -1305,7 +1302,6 @@ class AgentsPage extends StatelessWidget {
               speedOfParticles: 1,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              onTapAnimation: true,
               particleColor: const Color(0xFFf97316).withOpacity(0.2),
               awayAnimationDuration: const Duration(milliseconds: 600),
               maxParticleSize: 3,
