@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'dart:js' as js;
+import 'dart:js_util' as js_util;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -10,6 +12,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_tilt/flutter_tilt.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:particles_flutter/particles_flutter.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:http/http.dart' as http;
 
 // --- Localization System ---
 enum AppLanguage { en, es }
@@ -42,6 +46,27 @@ class Translations {
       'recommendation': 'Recomendación de Juan Sabe v6.0 ULTRA:',
       'architect_title': 'THE ARCHITECT',
       'architect_subtitle': 'Soberanía Políglota y Orquestación de Torque',
+      'nav_web3': 'WEB3',
+      'web3_title': 'Nodo Web3',
+      'web3_subtitle': 'Conecta tu wallet para acceder al ecosistema descentralizado de DepredadorCloud.',
+      'web3_connect': 'Conectar Wallet',
+      'web3_disconnect': 'Desconectar',
+      'web3_no_metamask': 'MetaMask no detectado',
+      'web3_no_metamask_desc': 'Instala la extensión MetaMask para conectar tu wallet EVM.',
+      'web3_install': 'Instalar MetaMask',
+      'web3_address': 'Dirección',
+      'web3_network': 'Red',
+      'web3_balance': 'Balance',
+      'web3_connected': 'CONECTADO',
+      'web3_disconnected': 'DESCONECTADO',
+      'web3_what_title': '¿Por qué Web3?',
+      'web3_what_desc': 'DepredadorCloud integra contratos inteligentes para pagos de servicios, verificación de identidad descentralizada y trazabilidad de activos industriales en cadena.',
+      'web3_card1_title': 'Pagos On-Chain',
+      'web3_card1_desc': 'Paga servicios de TI y mecánica directamente en MATIC, ETH u otros tokens ERC-20.',
+      'web3_card2_title': 'NFT de Activos',
+      'web3_card2_desc': 'Cada pieza de maquinaria pesada puede ser tokenizada como NFT con historial de mantenimiento inmutable.',
+      'web3_card3_title': 'DAO de Clientes',
+      'web3_card3_desc': 'Los holders de tokens DC participan en decisiones de servicios y prioridades de la plataforma.',
     },
     AppLanguage.en: {
       'title': 'DepredadorCloud | IT & Heavy Mechanics Center',
@@ -69,6 +94,27 @@ class Translations {
       'recommendation': 'Juan Sabe v6.0 ULTRA Recommendation:',
       'architect_title': 'THE ARCHITECT',
       'architect_subtitle': 'Polyglot Sovereignty & Torque Orchestration',
+      'nav_web3': 'WEB3',
+      'web3_title': 'Web3 Node',
+      'web3_subtitle': 'Connect your wallet to access the DepredadorCloud decentralized ecosystem.',
+      'web3_connect': 'Connect Wallet',
+      'web3_disconnect': 'Disconnect',
+      'web3_no_metamask': 'MetaMask Not Detected',
+      'web3_no_metamask_desc': 'Install the MetaMask extension to connect your EVM wallet.',
+      'web3_install': 'Install MetaMask',
+      'web3_address': 'Address',
+      'web3_network': 'Network',
+      'web3_balance': 'Balance',
+      'web3_connected': 'CONNECTED',
+      'web3_disconnected': 'DISCONNECTED',
+      'web3_what_title': 'Why Web3?',
+      'web3_what_desc': 'DepredadorCloud integrates smart contracts for service payments, decentralized identity verification, and on-chain industrial asset traceability.',
+      'web3_card1_title': 'On-Chain Payments',
+      'web3_card1_desc': 'Pay for IT and mechanic services directly in MATIC, ETH, or other ERC-20 tokens.',
+      'web3_card2_title': 'Asset NFTs',
+      'web3_card2_desc': 'Each piece of heavy machinery can be tokenized as an NFT with immutable maintenance history.',
+      'web3_card3_title': 'Client DAO',
+      'web3_card3_desc': 'DC token holders participate in service decisions and platform priorities.',
     },
   };
 
@@ -80,6 +126,100 @@ class Translations {
 final ValueNotifier<AppLanguage> languageNotifier = ValueNotifier(
   AppLanguage.es,
 );
+
+// --- Web3 Wallet ---
+
+class WalletState {
+  final bool connected;
+  final String? address;
+  final String? chainName;
+  final String? balance;
+  const WalletState({
+    this.connected = false,
+    this.address,
+    this.chainName,
+    this.balance,
+  });
+}
+
+final ValueNotifier<WalletState> walletNotifier = ValueNotifier(
+  const WalletState(),
+);
+
+class WalletService {
+  static bool get isMetaMaskAvailable =>
+      js.context.hasProperty('ethereum') &&
+      js.context['ethereum'] != null;
+
+  static String _chainName(String id) {
+    switch (id) {
+      case '0x1':      return 'Ethereum Mainnet';
+      case '0x89':     return 'Polygon';
+      case '0xa':      return 'Optimism';
+      case '0xa4b1':   return 'Arbitrum One';
+      case '0xaa36a7': return 'Sepolia Testnet';
+      case '0x13882':  return 'Polygon Amoy';
+      default:         return 'Chain $id';
+    }
+  }
+
+  static String _rpcUrl(String chainId) {
+    switch (chainId) {
+      case '0x89':     return 'https://polygon-rpc.com';
+      case '0xaa36a7': return 'https://rpc.sepolia.org';
+      default:         return 'https://cloudflare-eth.com';
+    }
+  }
+
+  static Future<String> _fetchBalance(String address, String chainId) async {
+    try {
+      final client = Web3Client(_rpcUrl(chainId), http.Client());
+      final addr = EthereumAddress.fromHex(address);
+      final bal = await client.getBalance(addr);
+      await client.dispose();
+      final eth = bal.getValueInUnit(EtherUnit.ether);
+      return '${eth.toStringAsFixed(4)} ETH';
+    } catch (_) {
+      return '-- ETH';
+    }
+  }
+
+  static Future<void> connect() async {
+    if (!isMetaMaskAvailable) return;
+    try {
+      final accounts = await js_util.promiseToFuture<List<dynamic>>(
+        js_util.callMethod(
+          js.context['ethereum'],
+          'request',
+          [js_util.jsify({'method': 'eth_requestAccounts'})],
+        ),
+      );
+      if (accounts.isEmpty) return;
+      final address = accounts.first as String;
+      final chainId = await js_util.promiseToFuture<String>(
+        js_util.callMethod(
+          js.context['ethereum'],
+          'request',
+          [js_util.jsify({'method': 'eth_chainId'})],
+        ),
+      );
+      final balance = await _fetchBalance(address, chainId);
+      walletNotifier.value = WalletState(
+        connected: true,
+        address: address,
+        chainName: _chainName(chainId),
+        balance: balance,
+      );
+    } catch (_) {}
+  }
+
+  static void disconnect() {
+    walletNotifier.value = const WalletState();
+  }
+
+  static String truncate(String addr) =>
+      '${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}';
+}
 
 void main() {
   runApp(const RobotDetector(child: DepredadorCloudApp()));
@@ -97,6 +237,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/agents',
       builder: (context, state) => const AgentsPage(),
+    ),
+    GoRoute(
+      path: '/web3',
+      builder: (context, state) => const Web3Page(),
     ),
   ],
 );
@@ -192,6 +336,11 @@ class NavBar extends StatelessWidget {
                     Translations.t('nav_agents', lang),
                     onTap: () => context.go('/agents'),
                   ),
+                  _NavBtn(
+                    Translations.t('nav_web3', lang),
+                    onTap: () => context.go('/web3'),
+                    accent: true,
+                  ),
                   _NavBtn(Translations.t('nav_about', lang)),
                   _NavBtn(
                     Translations.t('nav_contact', lang),
@@ -218,6 +367,8 @@ class NavBar extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  const ConnectWalletButton(),
                 ],
               ),
             ],
@@ -231,7 +382,8 @@ class NavBar extends StatelessWidget {
 class _NavBtn extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
-  const _NavBtn(this.text, {this.onTap});
+  final bool accent;
+  const _NavBtn(this.text, {this.onTap, this.accent = false});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -240,13 +392,82 @@ class _NavBtn extends StatelessWidget {
         onPressed: onTap,
         child: Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 13,
-            color: Color(0xFF94a3b8),
+            color: accent
+                ? const Color(0xFF0ea5e9)
+                : const Color(0xFF94a3b8),
+            letterSpacing: accent ? 1.2 : 0,
           ),
         ),
       ),
+    );
+  }
+}
+
+// --- Web3 Widgets ---
+
+class ConnectWalletButton extends StatelessWidget {
+  const ConnectWalletButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<WalletState>(
+      valueListenable: walletNotifier,
+      builder: (context, wallet, _) {
+        final lang = languageNotifier.value;
+        if (wallet.connected && wallet.address != null) {
+          return OutlinedButton.icon(
+            onPressed: WalletService.disconnect,
+            icon: Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: Color(0xFF22c55e),
+                shape: BoxShape.circle,
+              ),
+            ),
+            label: Text(
+              WalletService.truncate(wallet.address!),
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF22c55e), width: 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+        }
+        return ElevatedButton.icon(
+          onPressed: () async {
+            if (!WalletService.isMetaMaskAvailable) {
+              context.go('/web3');
+            } else {
+              await WalletService.connect();
+            }
+          },
+          icon: const Icon(LucideIcons.wallet, size: 14),
+          label: Text(
+            Translations.t('web3_connect', lang),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF0ea5e9),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -1594,6 +1815,541 @@ class _AgentPulseCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// Web3Page
+// ─────────────────────────────────────────────────────────
+
+class Web3Page extends StatelessWidget {
+  const Web3Page({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<AppLanguage>(
+      valueListenable: languageNotifier,
+      builder: (context, lang, _) {
+        return ValueListenableBuilder<WalletState>(
+          valueListenable: walletNotifier,
+          builder: (context, wallet, _) {
+            final hasMetaMask = WalletService.isMetaMaskAvailable;
+            return Scaffold(
+              body: Stack(
+                children: [
+                  // Background gradient
+                  Positioned.fill(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: RadialGradient(
+                          center: Alignment(-0.6, -0.5),
+                          radius: 1.2,
+                          colors: [
+                            Color(0x200ea5e9),
+                            Color(0xFF020617),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 130, 40, 60),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header
+                          FadeInDown(
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0ea5e9).withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: const Color(0xFF0ea5e9).withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    LucideIcons.link,
+                                    color: Color(0xFF0ea5e9),
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      Translations.t('web3_title', lang),
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 42,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      'EVM · Smart Contracts · DeFi',
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 14,
+                                        color: const Color(0xFF0ea5e9),
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FadeInLeft(
+                            child: Text(
+                              Translations.t('web3_subtitle', lang),
+                              style: const TextStyle(
+                                fontSize: 17,
+                                color: Color(0xFF94a3b8),
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 50),
+
+                          // Wallet Card
+                          FadeInUp(
+                            child: _WalletCard(
+                              wallet: wallet,
+                              lang: lang,
+                              hasMetaMask: hasMetaMask,
+                            ),
+                          ),
+                          const SizedBox(height: 60),
+
+                          // Why Web3 section
+                          FadeInUp(
+                            delay: const Duration(milliseconds: 200),
+                            child: Text(
+                              Translations.t('web3_what_title', lang),
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          FadeInUp(
+                            delay: const Duration(milliseconds: 250),
+                            child: Text(
+                              Translations.t('web3_what_desc', lang),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF94a3b8),
+                                height: 1.7,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+
+                          // Feature cards grid
+                          GridView.count(
+                            crossAxisCount:
+                                ResponsiveBreakpoints.of(context).isDesktop ? 3 : 1,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            childAspectRatio: 1.6,
+                            children: [
+                              _Web3FeatureCard(
+                                icon: LucideIcons.coins,
+                                title: Translations.t('web3_card1_title', lang),
+                                desc: Translations.t('web3_card1_desc', lang),
+                                color: const Color(0xFF0ea5e9),
+                              ),
+                              _Web3FeatureCard(
+                                icon: LucideIcons.gem,
+                                title: Translations.t('web3_card2_title', lang),
+                                desc: Translations.t('web3_card2_desc', lang),
+                                color: const Color(0xFFf97316),
+                              ),
+                              _Web3FeatureCard(
+                                icon: LucideIcons.vote,
+                                title: Translations.t('web3_card3_title', lang),
+                                desc: Translations.t('web3_card3_desc', lang),
+                                color: const Color(0xFF8b5cf6),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 60),
+                          const FooterSection(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const NavBar(),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _WalletCard extends StatefulWidget {
+  final WalletState wallet;
+  final AppLanguage lang;
+  final bool hasMetaMask;
+  const _WalletCard({
+    required this.wallet,
+    required this.lang,
+    required this.hasMetaMask,
+  });
+  @override
+  State<_WalletCard> createState() => _WalletCardState();
+}
+
+class _WalletCardState extends State<_WalletCard> {
+  bool _loading = false;
+
+  Future<void> _handleConnect() async {
+    setState(() => _loading = true);
+    await WalletService.connect();
+    if (mounted) setState(() => _loading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lang = widget.lang;
+    final wallet = widget.wallet;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(36),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0f172a).withOpacity(0.7),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: wallet.connected
+                  ? const Color(0xFF22c55e).withOpacity(0.4)
+                  : const Color(0xFF0ea5e9).withOpacity(0.2),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: (wallet.connected
+                        ? const Color(0xFF22c55e)
+                        : const Color(0xFF0ea5e9))
+                    .withOpacity(0.08),
+                blurRadius: 40,
+                spreadRadius: 5,
+              ),
+            ],
+          ),
+          child: wallet.connected
+              ? _connectedView(lang, wallet)
+              : !widget.hasMetaMask
+                  ? _noMetaMaskView(lang)
+                  : _connectView(lang),
+        ),
+      ),
+    );
+  }
+
+  Widget _connectedView(AppLanguage lang, WalletState wallet) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: const BoxDecoration(
+                color: Color(0xFF22c55e),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              Translations.t('web3_connected', lang),
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 13,
+                color: const Color(0xFF22c55e),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 28),
+        _InfoRow(
+          icon: LucideIcons.user,
+          label: Translations.t('web3_address', lang),
+          value: wallet.address ?? '',
+          monospace: true,
+        ),
+        const SizedBox(height: 16),
+        _InfoRow(
+          icon: LucideIcons.network,
+          label: Translations.t('web3_network', lang),
+          value: wallet.chainName ?? '--',
+        ),
+        const SizedBox(height: 16),
+        _InfoRow(
+          icon: LucideIcons.coins,
+          label: Translations.t('web3_balance', lang),
+          value: wallet.balance ?? '--',
+          valueColor: const Color(0xFF22c55e),
+        ),
+        const SizedBox(height: 32),
+        OutlinedButton.icon(
+          onPressed: WalletService.disconnect,
+          icon: const Icon(LucideIcons.logOut, size: 16),
+          label: Text(Translations.t('web3_disconnect', lang)),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xFF94a3b8),
+            side: const BorderSide(color: Color(0xFF334155)),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _connectView(AppLanguage lang) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: const Color(0xFF94a3b8).withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              Translations.t('web3_disconnected', lang),
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 13,
+                color: const Color(0xFF94a3b8),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 28),
+        Text(
+          Translations.t('web3_connect', lang),
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'MetaMask · WalletConnect · EVM',
+          style: TextStyle(color: Color(0xFF64748b), fontSize: 14),
+        ),
+        const SizedBox(height: 32),
+        ElevatedButton.icon(
+          onPressed: _loading ? null : _handleConnect,
+          icon: _loading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Icon(LucideIcons.wallet, size: 18),
+          label: Text(
+            _loading ? '...' : Translations.t('web3_connect', lang),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF0ea5e9),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _noMetaMaskView(AppLanguage lang) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(LucideIcons.alertTriangle,
+                color: Color(0xFFf97316), size: 20),
+            const SizedBox(width: 10),
+            Text(
+              Translations.t('web3_no_metamask', lang),
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFf97316),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Text(
+          Translations.t('web3_no_metamask_desc', lang),
+          style: const TextStyle(
+            color: Color(0xFF94a3b8),
+            fontSize: 15,
+            height: 1.6,
+          ),
+        ),
+        const SizedBox(height: 28),
+        ElevatedButton.icon(
+          onPressed: () async {
+            final url = Uri.parse('https://metamask.io/download/');
+            if (await canLaunchUrl(url)) launchUrl(url);
+          },
+          icon: const Icon(LucideIcons.externalLink, size: 16),
+          label: Text(Translations.t('web3_install', lang)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFf97316),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool monospace;
+  final Color? valueColor;
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.monospace = false,
+    this.valueColor,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: const Color(0xFF0ea5e9)),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF64748b),
+                letterSpacing: 1.2,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: valueColor ?? Colors.white,
+                fontFamily: monospace ? 'monospace' : null,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Web3FeatureCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String desc;
+  final Color color;
+  const _Web3FeatureCard({
+    required this.icon,
+    required this.title,
+    required this.desc,
+    required this.color,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0f172a).withOpacity(0.6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.06),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Text(
+              desc,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF94a3b8),
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
