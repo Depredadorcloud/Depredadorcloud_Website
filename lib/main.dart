@@ -801,18 +801,16 @@ class MechanicsPage extends StatelessWidget {
                             ],
                           ),
                           clipBehavior: Clip.antiAlias,
-                          child: Flexible(
-                            child: ImageRenderer(
-                              alt: 'Heavy Machinery Workshop',
-                              child: Image.asset(
-                                'assets/img/mechanic/banner.png',
-                                height:
-                                    ResponsiveBreakpoints.of(context).isMobile
-                                    ? 250
-                                    : 400,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                          child: ImageRenderer(
+                            alt: 'Heavy Machinery Workshop',
+                            child: Image.asset(
+                              'assets/img/mechanic/banner.png',
+                              height:
+                                  ResponsiveBreakpoints.of(context).isMobile
+                                  ? 250
+                                  : 400,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
