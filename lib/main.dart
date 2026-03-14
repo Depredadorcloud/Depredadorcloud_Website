@@ -305,9 +305,7 @@ class _HomePageState extends State<HomePage> {
                 awayRadius: 100,
                 isRandSize: true,
                 isRandomColor: false,
-                isLineVisible:
-                    !isMechanicMode, // Show connecting lines only in IT mode
-                lineColor: accentColor.withOpacity(0.1),
+                connectDots: !isMechanicMode,
               ),
             ),
           ),
@@ -1306,8 +1304,8 @@ class AgentsPage extends StatelessWidget {
               awayAnimationDuration: const Duration(milliseconds: 600),
               maxParticleSize: 3,
               isRandSize: true,
-              isLineVisible: true,
-              lineColor: const Color(0xFFf97316).withOpacity(0.1),
+              isRandomColor: false,
+              connectDots: true,
             ),
           ),
           SingleChildScrollView(
